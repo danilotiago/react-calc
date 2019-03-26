@@ -31,7 +31,52 @@ export default class Calculator extends Component {
     }
 
     setOperation(operation) {
-        console.log(operation)
+
+        // caso ainda estivermos no primeiro valor e for
+        // acionado uma operacao
+        if (this.state.current === 0) {
+            // atribui a operacao
+            // seta pra adicionar o segundo valor
+            // deve limpar o display
+            this.setState({operation, current: 1, clearDisplay: true})
+        } else {
+            // true se a operacao acionada for igual
+            const equals = operation === '='
+            // pega a operacao que ja esta armazenada
+            // fazer estes clones sao necessarios pois o estado so
+            // muda quando o setState() for acionado
+            const currentOperation = this.state.operation
+
+            // fazemos o clone dos valores do array do estado
+            // fazer estes clones sao necessarios pois o estado so
+            // muda quando o setState() for acionado
+            const values = [...this.state.values]
+
+            switch (currentOperation) {
+                case '+' :
+                    values[0] = values[0] + values[1]
+                break
+                case '-' :
+                    values[0] = values[0] - values[1]
+                break
+                case '*' :
+                    values[0] = values[0] * values[1]
+                break
+                case '/' :
+                    values[0] = values[0] / values[1]
+                break
+            }
+            values[1] = 0
+
+            this.setState({
+                displayValue: values[0],
+                values,
+                operation: equals ? null : operation, // se for de igual anula, se nao seta a que foi chamada
+                current: equals ? 0 : 1, // se for igual seta para a posicao do valor 0, se nao a 1
+                clearDisplay: !equals // se nao for igual nao deve zerar o display pois a pos 0 tem valor valido
+            })
+
+        }
     }
 
     addDigit(digit) {
@@ -62,7 +107,9 @@ export default class Calculator extends Component {
             const i = this.state.current
             // pega e converte o novo valor atual
             const newValue = parseFloat(displayValue)
-            // pega o array de valores do state.values
+            // fazemos o clone dos valores do array do estado
+            // fazer estes clones sao necessarios pois o estado so
+            // muda quando o setState() for acionado
             const values = [...this.state.values]
             // atribui o novo valor convertido para a posicao i
             values[i] = newValue
